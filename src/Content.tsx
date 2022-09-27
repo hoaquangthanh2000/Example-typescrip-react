@@ -1,43 +1,31 @@
 
-import { useEffect, useState } from "react"
-
-const tabs = ['comments','posts','albums']
+import React, {  useEffect, useState } from "react"
+// {target:{files: object[]}}
+interface FileType extends File {
+   
+        preview?: string 
+    
+}
 function Content(){
-    const [title,setTitle] = useState('')
-    const [todos,setTodos] = useState<{userId:number,id:number,title:string,completed:boolean}[]>([])
-    const [type,setType] = useState('posts')
-    useEffect(() => {
-        fetch(`https://jsonplaceholder.typicode.com/${type}`)
-            .then(res => res.json())
-            .then(items => {
-                setTodos(items)
-            })
-    },[type])
+    const [avatar,setAvatar] = useState<FileType>()
 
+    const handlePreviewAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if( e.target.files){
+            const file:FileType = e.target.files[0]
+            file.preview = URL.createObjectURL(file)
+            setAvatar(file)
+        }
+    }
 
     return (
         <div>
-            {tabs.map((tab) => (
-                <button 
-                    key={tab}
-                    style={ type === tab ? {
-                        color:'#fff',
-                        backgroundColor:'#333'
-                    }:{}}
-                    onClick={() => setType(tab)}
-                >
-                    {tab}
-                </button>
-            ))}
-            <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
-            <ul>
-                {todos.map((item,index) => (
-                    <li key={index}>{item.title}</li>
-                ))}
-            </ul>
+           <input
+                type="file"
+                onChange={handlePreviewAvatar}
+           />
+           {avatar && (
+                <img src={avatar.preview} width="80%"/>
+           )}
         </div>
     )
 }
